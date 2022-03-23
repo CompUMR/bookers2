@@ -1,0 +1,60 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8 col-lg-5 px-5 px-sm-0 mx-auto">
+      <h1>User info</h1>
+
+      <!--errors…モデルにバリデーションをかけた時に、発生したエラーの内容を確認出来るメソッド。
+      any? と組み合わせることで、エラーが発生しているかどうかを判定出来る。
+      また、full_messagesと組み合わせることで、エラーの内容を出力出来る。 (この時、エラー文は配列で保存されているため、eachを使う)-->
+      <% if @user.errors.any? %>
+        <%= @user.errors.count %>error prohibited this obj from being saved:
+        <ul>
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li> <!--ここで配列|message|から取り出した、該当のエラーメッセージを出力している-->
+          <% end %>
+        </ul>
+      <% end %>
+
+      <!--form_with…viewファイルで使用することが出来る、フォームの作成に用いられるメソッド。-->
+      <!--|f|の部分はブロック変数と言い、特定の範囲内で使える変数のこと。今回だとform_withのdoからendまでの範囲で使える。-->
+      <!--このブロック変数「f」には設定したmodelの情報(@user)も含まれている-->
+      <%= form_with model: @user, url: update_user_path, method: :patch do |f| %>
+        <!--「:name」の部分にはプロパティが入ることになり、ブロック変数「f」にはUserモデルの情報も入っているため、
+        このプロパティ名をnameとすることで、UserモデルにあるnameカラムだとRailsは判別することができ、DBに保存することが出来る-->
+        <!--ヘルパー(モデルオブジェクト)「text_field」は単一行のテキストフィールドを提供する部品-->
+        <!--「f.text_field」「f.text_area」「f.submit」の「f」はブロック変数「f」のことだよー　byメンター-->
+        <div class="form-group">
+          <label for="user_name">Name</label>
+          <!--divにclass="form-control name"を設定すると何故フォームが二重になってしまうのか？-->
+          <!--もしかしてdiv自体にclassが適用されてしまい、f.text_fieldには適用されないから？-->
+          <div>
+            <%= f.text_field :name %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="user_image">Image</label>
+          <!--accept: "image/*"で画像ファイルのみ投稿出来るようにしている-->
+          <%= f.file_field :profile_image, accept: "image/*", class: "form-control-file user_image" %>
+        </div>
+
+        <div class="form-group">
+          <label for="user_introduction">Introduction</label>
+          <!--divにclass="form-control introduction"を設定すると何故フォームが二重になってしまうのか？-->
+          <!--もしかしてdiv自体にclassが適用されてしまい、f.text_areaには適用されないから？-->
+          <div>
+            <!--ヘルパー(モデルオブジェクト)「text_area」は複数行のテキストフィールドを提供する部品-->
+            <%= f.text_area :introduction %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <!--わざわざ<div class="actions"></div>でクラス名をつける必要はない-->
+          <%= f.submit 'Update User', class: "btn btn-secondary" %>
+        </div>
+
+      <% end %>
+
+    </div>
+  </div>
+</div>
